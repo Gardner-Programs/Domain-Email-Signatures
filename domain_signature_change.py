@@ -6,12 +6,9 @@ import json
 
 #creating the credentials to contact the admin sdk api for google
 def create_directory_service():
-    SERVICE_ACCOUNT_EMAIL = 'service account email address goes here'
-    SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'the p12 file that works similar to the json secret'
-    credentials = ServiceAccountCredentials.from_p12_keyfile(
-        SERVICE_ACCOUNT_EMAIL,
-        SERVICE_ACCOUNT_PKCS12_FILE_PATH,
-        'secret goes here default is useally "notasecret"',
+    service_account_json_file_path = 'the json keyfile path goes here'
+	credentials = ServiceAccountCredentials.from_json_keyfile_name(
+        service_account_json_file_path,
         #scopes needed to access the api
         scopes=['https://www.googleapis.com/auth/admin.directory.user'])
     credz = credentials.create_delegated("the email address of the person authorized to make the changes goes here")
