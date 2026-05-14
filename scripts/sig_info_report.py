@@ -1,7 +1,11 @@
+"""Export all domain users' Signature_Info custom schema fields to a CSV file."""
+
+from __future__ import annotations
+
 import os
-from authenticator import admin_directory_v1_api
 import time
 import pandas as pd
+from authenticator import admin_directory_v1_api
 
 # --- CONFIGURATION ---
 SCHEMA_NAME = "Signature_Info"
@@ -10,7 +14,8 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'out
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 CSV_FILENAME = os.path.join(OUTPUT_DIR, "signature_info_export.csv")
 
-def export_schema_to_csv(domain_name):
+def export_schema_to_csv(domain_name: str) -> None:
+    """Fetch all active users and write their Signature_Info schema fields to CSV."""
     service = admin_directory_v1_api()
     page_token = None
     all_rows = []
@@ -77,5 +82,5 @@ def export_schema_to_csv(domain_name):
     else:
         print("No data found to export.")
 
-# Run
-export_schema_to_csv(DOMAIN)
+if __name__ == "__main__":
+    export_schema_to_csv(DOMAIN)

@@ -1,20 +1,32 @@
 """Check team.lead@ group members for any with Template='branch_c' (should be 'branch_c_ii')."""
-import os, sys
-import pandas as pd
 
-# Reuse Google_Workspace helpers
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-GW_SCRIPTS = os.path.join(THIS_DIR, '..', '..', 'Google_Workspace', 'scripts')
-sys.path.insert(0, os.path.abspath(GW_SCRIPTS))
-from _master import get_service, get_members  # noqa: E402
+from __future__ import annotations
+
+import os
+import pandas as pd
+from authenticator import admin_directory_v1_api
 
 GROUP = "team.lead@company.com"
 CSV = os.path.join(THIS_DIR, '..', 'output', 'signature_info_export.csv')
 
-def main():
-    service = get_service()
+def _get_members(service: object, group_email: str) -> list[dict]:
+    """Return all members of *group_email* using the Admin Directory API."""
+    members: list[dict] = []
+    page_token = None
+    while True:
+        result = service.members().list(groupKey=group_email, pageToken=page_token).execute()
+        members.extend(result.get("members", []))
+        page_token = result.get("nextPageToken")
+        if not page_token:
+            break
+    return members
+
+
+def main() -> None:
+    """Print group members whose Template is 'branch_c' when it should be 'branch_c_ii'."""
+    service = admin_directory_v1_api()
     print(f"Fetching members of {GROUP}...")
-    members = get_members(service, GROUP) or []
+    members = _get_members(service, GROUP)
     member_emails = {m.get("email", "").lower() for m in members if m.get("email")}
     print(f"Found {len(member_emails)} members.\n")
 

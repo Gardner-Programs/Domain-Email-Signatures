@@ -13,9 +13,11 @@ Edit FIELD, NEW_VALUE, EXPECTED_CURRENT, and TARGETS at the top of the file.
 EXPECTED_CURRENT acts as a safety guard: users whose current value doesn't
 match are skipped (set to None to disable the guard).
 """
-from authenticator import admin_directory_v1_api
+from __future__ import annotations
+
 import sys
 import time
+from authenticator import admin_directory_v1_api
 
 SCHEMA_NAME = "Signature_Info"
 DOMAIN = "company.com"
@@ -31,7 +33,12 @@ TARGETS = [
 ]
 
 
-def run_updates(dry_run=True):
+def run_updates(dry_run: bool = True) -> None:
+    """Apply (or preview) a bulk field update for all TARGETS.
+
+    Args:
+        dry_run: When True, print intended changes without writing to the API.
+    """
     service = admin_directory_v1_api()
     errors, changes, skipped = [], [], []
 

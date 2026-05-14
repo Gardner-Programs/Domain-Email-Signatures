@@ -3,10 +3,12 @@ Office Template Preview Generator
 Generates JPG preview images for all office template roster users using their live directory data.
 Output: output/office_template_review/
 """
+from __future__ import annotations
+
+import os
+import imgkit
 from authenticator import admin_directory_v1_api
 from email_templates import set_html_template
-import imgkit
-import os
 
 DOMAIN = "company.com"
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "output", "office_template_review")
@@ -18,7 +20,8 @@ ROSTER = [
 ]
 
 
-def fetch_user(service, email):
+def fetch_user(service, email: str) -> dict | None:
+    """Return the full user record for *email*, or None if not found."""
     result = service.users().list(
         domain=DOMAIN, maxResults=1, orderBy="email",
         query=f"email={email}", projection="full"
@@ -27,7 +30,8 @@ def fetch_user(service, email):
     return users[0] if users else None
 
 
-def generate():
+def generate() -> None:
+    """Generate JPG signature previews for every entry in ROSTER."""
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     service = admin_directory_v1_api()
     success, errors = 0, []

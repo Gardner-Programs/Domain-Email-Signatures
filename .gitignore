@@ -1,0 +1,23 @@
+# Credentials — never commit these
+*.json
+.env
+Keys/
+
+# Generated output — keep the folder, ignore contents
+output/*
+!output/.gitkeep
+downloads/
+*.jpg
+*.html
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+.env.*
+!.env.example

@@ -22,9 +22,11 @@ Roster entry shape — only 'email' is required, every other field is optional:
         "about":          "Some bio text",     # Signature_Info.About
     }
 """
-from authenticator import admin_directory_v1_api
+from __future__ import annotations
+
 import sys
 import time
+from authenticator import admin_directory_v1_api
 
 SCHEMA_NAME = "Signature_Info"
 DOMAIN = "company.com"
@@ -49,7 +51,13 @@ ROSTER = [
 ]
 
 
-def run_updates(roster, dry_run=True):
+def run_updates(roster: list[dict], dry_run: bool = True) -> None:
+    """Apply (or preview) Signature_Info and profile-title changes from *roster*.
+
+    Args:
+        roster: List of update entries; only 'email' is required per entry.
+        dry_run: When True, print diffs without writing to the API.
+    """
     service = admin_directory_v1_api()
     errors, changes = [], []
 
