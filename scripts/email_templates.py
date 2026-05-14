@@ -1,3 +1,12 @@
+"""
+Email signature HTML template builder.
+
+CONFIGS maps template keys to per-template overrides applied on top of the
+global defaults.  Call set_html_template() with a user's directory data to
+get the final minified HTML string ready to push to the Gmail API.
+"""
+from __future__ import annotations
+
 import html
 
 # --- 1. ASSETS & TEXT BLOCKS ---
@@ -99,7 +108,40 @@ CONFIGS = {
 }
 
 
-def set_html_template(template="", fullname="", title="", location="", email="", ext="", cell="", direct="", ltl=False, about=""):
+def set_html_template(
+    template: str = "",
+    fullname: str = "",
+    title: str = "",
+    location: str = "",
+    email: str = "",
+    ext: str = "",
+    cell: str = "",
+    direct: str = "",
+    ltl: bool = False,
+    about: str = "",
+) -> str:
+    """Build and return a minified HTML email signature string.
+
+    Looks up *template* in CONFIGS, applies per-template overrides, then
+    assembles the phone block, logo block, hotline, legal disclaimer, and
+    custom header/body into a single ``<div>`` ready to push to the Gmail API.
+
+    Args:
+        template: Key from CONFIGS (e.g. ``"regional_template"``).  Defaults
+                  to the ``"default"`` config when the key is not found.
+        fullname: Employee's full display name (HTML-escaped before use).
+        title: Job title (HTML-escaped before use).
+        location: Office location string shown in the signature body.
+        email: Employee's primary email address.
+        ext: PBX extension number appended to the main phone line when allowed.
+        cell: Cell phone number shown as a separate line when provided.
+        direct: Direct-dial number shown as a separate line when provided.
+        ltl: When True, append the LTL liability legal disclaimer.
+        about: URL for the employee's "About me" profile link.
+
+    Returns:
+        Minified HTML string (newlines and excess whitespace removed).
+    """
 
     # --- 3. PROCESSING LOGIC ---
 

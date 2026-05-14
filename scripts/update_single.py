@@ -1,8 +1,17 @@
+"""
+Update or preview the Gmail signature for a single user.
+
+``start(email)``    — push the live signature based on their directory data.
+``start_all(email)`` — generate preview images for every template (no live changes).
+"""
+
+from __future__ import annotations
+
+import os
+import re
+import imgkit
 from authenticator import admin_directory_v1_api, gmail_v1_api
 from email_templates import set_html_template, CONFIGS
-import imgkit
-import os
-import re  # Added for safe HTML injection
 
 # --- Configuration: Debug Overlay ---
 # This HTML snippet is injected only during 'start_all'
@@ -26,8 +35,8 @@ DEBUG_OVERLAY_HTML = """
 """
 
 # --- Helper: Update Gmail Signature ---
-def set_signature(email, html):
-    """Updates the live Gmail signature for the user."""
+def set_signature(email: str, html: str) -> str | None:
+    """Push *html* as the live Gmail signature for *email* and return the saved signature."""
     try:
         DATA = {"signature": html}
         gmail_service = gmail_v1_api(email)
@@ -43,8 +52,8 @@ def set_signature(email, html):
         return None
 
 # --- Helper: Generate Image Preview ---
-def generate_preview_image(email, html, template_name):
-    """Generates a JPG preview of the signature in the Downloads folder."""
+def generate_preview_image(email: str, html: str, template_name: str) -> None:
+    """Render *html* to a JPG preview image in the user's Downloads folder."""
 
     # robust path finding (works for any user)
     downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
@@ -71,8 +80,8 @@ def generate_preview_image(email, html, template_name):
         print(f"Error generating image for {template_name}: {e}")
 
 # --- Helper: Extract User Data ---
-def get_user_data(user):
-    """Unpacks user data safely, similar to google_api.py"""
+def get_user_data(user: dict) -> dict:
+    """Unpack a Google Directory user record into signature template parameters."""
     fullname = user["name"]["fullName"]
     email = user["primaryEmail"]
     sig_data = user.get("customSchemas", {}).get("Signature_Info", {})
@@ -92,11 +101,8 @@ def get_user_data(user):
     }
 
 # --- MAIN FUNCTION 1: Update Single User ---
-def start(userEmail):
-    """
-    Updates the LIVE signature for the specific user based on their
-    current directory settings.
-    """
+def start(userEmail: str) -> None:
+    """Update the live Gmail signature for *userEmail* from their current directory data."""
     print(f"Fetching data for {userEmail}...")
     service = admin_directory_v1_api()
     result = service.users().list(
@@ -136,12 +142,8 @@ def start(userEmail):
 
 
 # --- MAIN FUNCTION 2: Test All Templates ---
-def start_all(userEmail):
-    """
-    Does NOT update live signatures.
-    Generates a preview image for EVERY template using the user's info.
-    INJECTS TEMPLATE NAME into the top of the image.
-    """
+def start_all(userEmail: str) -> None:
+    """Generate preview images for every template using *userEmail*'s info (no live changes)."""
     print(f"Fetching data for {userEmail} to test all templates...")
     service = admin_directory_v1_api()
     result = service.users().list(
@@ -200,4 +202,5 @@ def start_all(userEmail):
     print("Batch generation complete. Check your Downloads folder.")
 
 
-start_all("admin@company.com")
+if __name__ == "__main__":
+    start_all("admin@company.com")

@@ -1,7 +1,12 @@
+"""Export every active user's live Gmail signature HTML to a shared Google Drive folder."""
+
+from __future__ import annotations
+
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from authenticator import admin_directory_v1_api, drive_v3_api, GmailBatchAuthenticator
 from googleapiclient.http import MediaInMemoryUpload
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
 
 # Configuration
 DOMAIN = 'company.com'
@@ -9,18 +14,18 @@ SHARED_DRIVE_FOLDER_ID = 'YOUR_FOLDER_ID_HERE'
 MAX_RETRIES = 3
 MAX_WORKERS = 20  # Thread-local services prevent SSL errors, safe to go higher
 
-# Thread-local Drive service to avoid sharing HTTP connections across threads
-import threading
 _thread_local = threading.local()
 
+
 def _get_drive_service():
-    """Returns a per-thread Drive API service instance."""
+    """Return a per-thread Drive API service instance (avoids sharing SSL connections)."""
     if not hasattr(_thread_local, "drive_service"):
         _thread_local.drive_service = drive_v3_api()
     return _thread_local.drive_service
 
-def get_existing_files():
-    """Pre-fetches all files in the shared Drive folder. Returns a dict of {filename: file_id}."""
+
+def get_existing_files() -> dict[str, str]:
+    """Pre-fetch all files in the shared Drive folder and return ``{filename: file_id}``."""
     drive_service = drive_v3_api()
     existing = {}
     page_token = None
@@ -47,8 +52,8 @@ def get_existing_files():
     print(f"Found {len(existing)} existing files in Drive.")
     return existing
 
-def upload_to_drive(filename, content, existing_files):
-    """Uploads or updates an HTML file in the shared Drive folder."""
+def upload_to_drive(filename: str, content: str, existing_files: dict[str, str]) -> None:
+    """Upload or update an HTML file in the shared Drive folder."""
     drive_service = _get_drive_service()
     media = MediaInMemoryUpload(content.encode("utf-8"), mimetype="text/html")
 
@@ -73,8 +78,8 @@ def upload_to_drive(filename, content, existing_files):
             supportsAllDrives=True
         ).execute()
 
-def get_all_active_users():
-    """Fetches all active users from the domain using efficient pagination."""
+def get_all_active_users() -> list[dict]:
+    """Fetch all active, non-suspended domain users (excluding /Non-User Accounts)."""
     service = admin_directory_v1_api()
     users_list = []
     page_token = None
@@ -103,8 +108,14 @@ def get_all_active_users():
     print(f"Found {len(users_list)} active users. Starting signature export...")
     return users_list
 
-def save_signature(gmail_batch, existing_files, user, index, total):
-    """Worker function to fetch and upload a single user's signature to Google Drive."""
+def save_signature(
+    gmail_batch: GmailBatchAuthenticator,
+    existing_files: dict[str, str],
+    user: dict,
+    index: int,
+    total: int,
+) -> str:
+    """Fetch and upload a single user's Gmail signature to Drive. Returns 'success', 'skipped', or 'error'."""
     user_email = user.get("primaryEmail")
     user_name = user.get("name", {}).get("fullName", "Unknown_Name")
     start = time.time()
@@ -137,7 +148,8 @@ def save_signature(gmail_batch, existing_files, user, index, total):
             print(f"[{index}/{total}] Error: {user_name} ({user_email}): {str(e)} ({time.time() - start:.1f}s)")
             return "error"
 
-def main():
+def main() -> None:
+    """Fetch all user signatures and upload them to the shared Drive folder."""
     # 1. Get the list of users
     users = get_all_active_users()
 

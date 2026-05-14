@@ -1,7 +1,11 @@
+"""Audit office-template users against SOP requirements and export a compliance CSV."""
+
+from __future__ import annotations
+
 import os
+import pandas as pd
 from authenticator import admin_directory_v1_api
 from email_templates import CONFIGS
-import pandas as pd
 
 # --- Configuration ---
 DOMAIN = "company.com"
@@ -11,8 +15,8 @@ OFFICE_ORG_UNIT = "/All Sites/Branch G-II"
 VALID_OFFICE_TEMPLATES = {"office_template", "carrier_sales_template", "office_template_track_trace"}
 CARRIER_SALES_TITLES = {"carrier sales rep", "carrier team lead", "carrier sales manager"}
 
-def get_office_users():
-    """Fetches all active users in the office template org unit."""
+def get_office_users() -> list[dict]:
+    """Fetch all active users in the office-template org unit."""
     service = admin_directory_v1_api()
     all_users = []
     page_token = None
@@ -38,8 +42,8 @@ def get_office_users():
     print(f"Found {len(all_users)} active users in {OFFICE_ORG_UNIT}.\n")
     return all_users
 
-def audit_user(user):
-    """Checks a single user against SOP requirements. Returns a dict of findings."""
+def audit_user(user: dict) -> dict:
+    """Check a single user against SOP requirements and return a findings dict."""
     email = user.get("primaryEmail", "").lower()
     fullname = user.get("name", {}).get("fullName", "Unknown")
     org_unit = user.get("orgUnitPath", "")

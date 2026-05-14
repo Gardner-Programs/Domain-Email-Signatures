@@ -1,3 +1,7 @@
+"""Bulk email signature update script — updates all active domain users in parallel."""
+
+from __future__ import annotations
+
 import base64
 import concurrent.futures
 import time
@@ -14,8 +18,8 @@ SENDER_EMAIL = "formresponse@company.com"
 # 15 is a sweet spot for Google API rate limits (avoiding 429 errors)
 MAX_WORKERS = 15
 
-def send_error_report(to, subject, error_list):
-    """Sends a single email containing all logged errors."""
+def send_error_report(to: str, subject: str, error_list: list[str]) -> None:
+    """Send a single summary email containing all logged errors."""
     if not error_list:
         return
 
@@ -35,8 +39,8 @@ def send_error_report(to, subject, error_list):
     except Exception as e:
         print(f"Failed to send error report: {e}")
 
-def get_all_active_users():
-    """Fetches ALL active users into a list."""
+def get_all_active_users() -> list[dict]:
+    """Fetch all active, non-suspended domain users (excluding /Non-User Accounts)."""
     service = admin_directory_v1_api()
     all_users = []
     page_token = None
@@ -74,7 +78,12 @@ def get_all_active_users():
     print(f"Directory fetch complete. Found {len(all_users)} eligible users.")
     return all_users
 
-def process_user_signature(user):
+def process_user_signature(user: dict) -> str | None:
+    """Build and push the Gmail signature for a single user.
+
+    Returns None on success or a formatted error string on failure.
+    Safe to call from multiple threads — creates its own API connections.
+    """
     # Safe extraction of data
     email = user.get("primaryEmail", "").lower()
     name_data = user.get("name", {})
