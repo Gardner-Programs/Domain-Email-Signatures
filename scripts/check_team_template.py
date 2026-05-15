@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from authenticator import admin_directory_v1_api
 
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 GROUP = "team.lead@company.com"
 CSV = os.path.join(THIS_DIR, '..', 'output', 'signature_info_export.csv')
 
