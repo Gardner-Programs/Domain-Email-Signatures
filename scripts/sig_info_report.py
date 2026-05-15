@@ -39,7 +39,8 @@ def export_schema_to_csv(domain_name: str) -> None:
             users = results.get('users', [])
 
             if not users:
-                if not page_token: break
+                if not page_token:
+                    break
 
             for user in users:
                 user_email = user.get("primaryEmail")
@@ -62,7 +63,8 @@ def export_schema_to_csv(domain_name: str) -> None:
 
             # Pagination
             page_token = results.get('nextPageToken')
-            if not page_token: break
+            if not page_token:
+                break
             time.sleep(0.5)  # Gentle rate limiting
 
         except Exception as e:

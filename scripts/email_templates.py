@@ -164,8 +164,10 @@ def set_html_template(
     # Special Case: Billing
     if template == "corp_billing":
         phone_html = f"""{p_style}<b>Carrier Settlements:</b> 555-000-0001 option #4</p>{p_style}<b>Email:</b> <a href="mailto:paystatus@company.com" style="color:#1155cc;text-decoration:underline;font-size:9pt;">paystatus@company.com</a></p>"""
-        if direct: phone_html += f'{p_style}<b>Direct Line:</b> {direct}</p>'
-        if cell: phone_html += f'{p_style}<b>Cell Phone:</b> {cell}</p>'
+        if direct:
+            phone_html += f'{p_style}<b>Direct Line:</b> {direct}</p>'
+        if cell:
+            phone_html += f'{p_style}<b>Cell Phone:</b> {cell}</p>'
 
     # Special Case: Templates that use Cell as the primary line
     elif config.get("force_cell_as_main"):
@@ -183,8 +185,10 @@ def set_html_template(
 
         phone_html = f'{p_style}<b>{label}:</b> {base_num}</p>'
         direct_label = config.get("direct_label", "Direct Line")
-        if direct: phone_html += f'{p_style}<b>{direct_label}:</b> {direct}</p>'
-        if cell: phone_html += f'{p_style}<b>Cell Phone:</b> {cell}</p>'
+        if direct:
+            phone_html += f'{p_style}<b>{direct_label}:</b> {direct}</p>'
+        if cell:
+            phone_html += f'{p_style}<b>Cell Phone:</b> {cell}</p>'
 
     # --- 5. BUILD REMAINING BLOCKS ---
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 import pandas as pd
 from authenticator import admin_directory_v1_api
-from email_templates import CONFIGS
 
 # --- Configuration ---
 DOMAIN = "company.com"
@@ -46,8 +45,6 @@ def audit_user(user: dict) -> dict:
     """Check a single user against SOP requirements and return a findings dict."""
     email = user.get("primaryEmail", "").lower()
     fullname = user.get("name", {}).get("fullName", "Unknown")
-    org_unit = user.get("orgUnitPath", "")
-
     sig_data = user.get("customSchemas", {}).get("Signature_Info", {})
     template = sig_data.get("Template", "").lower().replace(" ", "_")
     location = sig_data.get("Location", "")

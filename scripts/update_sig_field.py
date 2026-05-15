@@ -78,7 +78,7 @@ def run_updates(dry_run: bool = True) -> None:
             try:
                 body = {"customSchemas": {SCHEMA_NAME: {FIELD: NEW_VALUE}}}
                 service.users().patch(userKey=email, body=body).execute()
-                print(f"  >> Updated successfully")
+                print("  >> Updated successfully")
                 time.sleep(0.3)
             except Exception as e:
                 err = f"[UPDATE ERROR] {email}: {e}"

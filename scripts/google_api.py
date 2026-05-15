@@ -203,7 +203,8 @@ if __name__ == "__main__":
         print("-" * 40)
         for err in all_errors[:10]:
             print(err)
-        if len(all_errors) > 10: print(f"...and {len(all_errors)-10} more.")
+        if len(all_errors) > 10:
+            print(f"...and {len(all_errors)-10} more.")
         print("-" * 40)
 
         send_error_report(ADMIN_EMAIL, "Script Errors: Email Signature Update", all_errors)

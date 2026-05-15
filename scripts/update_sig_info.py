@@ -123,7 +123,7 @@ def run_updates(roster: list[dict], dry_run: bool = True) -> None:
                 if profile_updates:
                     body["organizations"] = [{"title": profile_updates["title"], "primary": True}]
                 service.users().patch(userKey=email, body=body).execute()
-                print(f"  >> Updated successfully")
+                print("  >> Updated successfully")
                 time.sleep(0.3)
             except Exception as e:
                 err = f"[UPDATE ERROR] {email}: {e}"
