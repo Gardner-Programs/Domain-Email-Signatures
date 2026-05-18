@@ -1,6 +1,8 @@
 # Domain Email Signatures
 
-A suite of Python scripts for managing Google Workspace email signatures at scale across an entire domain. Handles bulk application, template management, auditing, and field-level updates using the Gmail API and Google Admin SDK.
+Google Workspace has no bulk signature management. You can set a signature for one user at a time through Gmail settings — that's it. For a domain with hundreds of employees across multiple office locations, job titles, and phone numbers, that's not a workflow.
+
+This toolkit manages email signatures at the domain level: define HTML templates, store each user's signature fields (title, location, phone, extension) in Google Directory's custom schema, and push rendered signatures to every user's Gmail account programmatically. When someone's phone number changes or a new template rolls out to a branch, one script run updates everyone.
 
 ## Scripts
 
