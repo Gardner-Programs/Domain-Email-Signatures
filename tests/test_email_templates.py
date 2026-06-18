@@ -1,11 +1,11 @@
 """Unit tests for scripts/email_templates.py — set_html_template()."""
 
-import sys
 import os
+import sys
+
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from scripts.email_templates import set_html_template, CONFIGS
-
+from scripts.email_templates import CONFIGS, set_html_template
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -9,9 +9,10 @@ from __future__ import annotations
 
 import os
 import re
+
 import imgkit
 from authenticator import admin_directory_v1_api, gmail_v1_api
-from email_templates import set_html_template, CONFIGS
+from email_templates import CONFIGS, set_html_template
 
 # --- Configuration: Debug Overlay ---
 # This HTML snippet is injected only during 'start_all'

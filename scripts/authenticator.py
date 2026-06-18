@@ -23,13 +23,14 @@ from __future__ import annotations
 
 import os
 import os.path
+
 import requests
+from dotenv import load_dotenv
 from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, build_from_document
-from google.oauth2 import service_account
-from dotenv import load_dotenv
 
 # --- File names ---
 KEY_FILE = "service-account-key.json"

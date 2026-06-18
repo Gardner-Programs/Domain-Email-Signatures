@@ -6,6 +6,7 @@ Output: output/office_template_review/
 from __future__ import annotations
 
 import os
+
 import imgkit
 from authenticator import admin_directory_v1_api
 from email_templates import set_html_template
