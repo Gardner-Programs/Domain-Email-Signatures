@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import base64
 import concurrent.futures
-import time
 import random
+import time
 from email.message import EmailMessage
+
+from authenticator import GmailBatchAuthenticator, admin_directory_v1_api, gmail_v1_api
 from email_templates import set_html_template
-from authenticator import admin_directory_v1_api, gmail_v1_api, GmailBatchAuthenticator
 
 # --- Constants ---
 DOMAIN = "company.com"

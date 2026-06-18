@@ -1,0 +1,7 @@
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: import sorting. E501 (line length) ignored.
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
