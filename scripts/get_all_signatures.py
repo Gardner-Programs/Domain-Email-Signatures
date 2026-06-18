@@ -5,7 +5,8 @@ from __future__ import annotations
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from authenticator import admin_directory_v1_api, drive_v3_api, GmailBatchAuthenticator
+
+from authenticator import GmailBatchAuthenticator, admin_directory_v1_api, drive_v3_api
 from googleapiclient.http import MediaInMemoryUpload
 
 # Configuration
